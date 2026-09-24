@@ -1,0 +1,4 @@
+interface:
+  display_name: "Adversarial PR Review"
+  short_description: "Calibrate PR risks to the delivery stage"
+  default_prompt: "Use $review-pr-adversarially to review this PR against its declared MVP or production bar."
