@@ -3,15 +3,21 @@
 An agent skill for evidence-backed adversarial PR reviews, risk calibration,
 review comparisons, and deliberate publication of approved feedback.
 
-The skill separates finding discovery from blocker decisions and requires
-explicit authorization before publishing a review.
+Full reviews default to concurrent, clean-context **GPT-6.1 Sol + Grok** discovery
+over the same complete, head-pinned diff and relevant callers. Kimi is not a
+default lane. The outcome owner calibrates sealed findings after evidence
+verification; all requested lanes and required relevant gates must complete
+before final-complete publication. Comparisons and pending edits remain delta-scoped
+unless changed behavior warrants a new full review. Explicit roster overrides
+are supported; unavailable requested models are reported, never silently replaced.
 
 ## Source layout
 
 The source lives in [`skills/review-pr-adversarially/`](skills/review-pr-adversarially/):
 
 - `SKILL.md`: review workflow and invocation metadata.
-- `references/`: risk calibration, examples, review ledger, and pending-review guidance.
+- `references/`: blind orchestration, risk calibration, examples, portable ledger,
+  and pending-review guidance.
 - `agents/openai.yaml`: OpenAI agent display metadata.
 
 This is an Agent Skills package; Claude Code can use its `SKILL.md` directly.
@@ -23,7 +29,7 @@ From any directory, using the installed [Skills CLI](https://github.com/vercel-l
 and [Socket Firewall](https://github.com/SocketDev/sfw-free):
 
 ```sh
-sfw skills add chrisvaillancourt/review-pr-adversarially \
+sfw pnpm exec skills add chrisvaillancourt/review-pr-adversarially \
   --global --agent universal claude-code \
   --skill review-pr-adversarially --yes
 ```
@@ -51,7 +57,7 @@ the remote source for update tracking.
 Verify Claude's installation with:
 
 ```sh
-skills list --global --agent claude-code
+sfw pnpm exec skills list --global --agent claude-code
 ```
 
 Start a fresh agent session after installation if the current session caches its
@@ -61,7 +67,7 @@ and your review requirements.
 > **FYI — telemetry:** The Skills CLI supports opting out through either
 > `DISABLE_TELEMETRY` or `DO_NOT_TRACK`, set to `1` in your shell environment.
 > Exporting either in your shell startup file makes the setting persistent for
-> commands launched from that shell, including `sfw skills`. Other tools that
+> commands launched from that shell, including `sfw pnpm exec skills`. Other tools that
 > honor the same variable are also affected. See the
 > [Skills CLI telemetry documentation](https://github.com/vercel-labs/skills#telemetry).
 
@@ -71,14 +77,17 @@ Edit the source under `skills/review-pr-adversarially/`, then install your chang
 from the repository root:
 
 ```sh
-sfw skills add . --global --agent universal claude-code \
+sfw pnpm exec skills add . --global --agent universal claude-code \
   --skill review-pr-adversarially --yes
 ```
 
 From another directory, replace `.` with the absolute path to your checkout.
 Local-path installations do not provide a GitHub source for remote update
-tracking. Reinstall from the GitHub source when switching back to the published
-version.
+tracking. After developing locally, commit and publish the source updates to
+GitHub, then reinstall from `chrisvaillancourt/review-pr-adversarially` using the
+Install command above to restore remote tracking. Maintain this repository as
+the source of truth; do not move the installed copy into the repository or treat
+it as canonical.
 
 Before publishing changes, review all files for credentials, personal data,
 private project details, and internal links. The initial audit does not cover

@@ -20,6 +20,13 @@ review contract.
 - Treat a materially changed review-response commit as a fresh integration
   baseline, not only as resolution of previous threads.
 
+For **full reviews, batch reviews, and fresh integration reviews**, read and
+follow [review-orchestration.md](references/review-orchestration.md) before
+discovery: concurrent blind, full-coverage GPT-6.1 Sol + Grok is the default.
+Comparisons and pending edits stay delta-scoped unless changed behavior warrants
+a new full review. Explicit roster overrides remain explicit; Kimi is not a
+default or automatic high-risk lane.
+
 ## 1. Establish the review contract
 
 Gather the contract from the user, ticket, PR description, design documents, and
@@ -35,8 +42,9 @@ Capture:
 - operator supervision and observability;
 - retry, rollback, and manual-recovery options;
 - cost of failed, repeated, duplicated, or corrupted work;
-- conditions that would invalidate the experiment or release; and
-- explicit non-goals and accepted debt.
+- conditions that would invalidate the experiment or release;
+- ticket/spec requirements and relevant repository standards; and
+- explicit non-goals and factual accepted debt.
 
 Define the blocker gates before deep discovery. For a supervised pre-production
 MVP, start with these gates unless the evidence requires a different bar:
@@ -52,15 +60,16 @@ Use the contract template in
 
 ## 2. Build the evidence baseline
 
-- Inspect the complete diff and the current versions of affected code and tests.
+- Pin the exact base/head and inspect the complete diff and current affected code
+  and tests.
 - Trace changed behavior across relevant library, service, persistence,
   deployment, permissions, and schema boundaries.
 - Check authoritative contracts rather than relying on names or plausible API
   shapes.
-- Exercise the narrowest real integration path when a claim depends on an
-  installed library or cross-system configuration.
-- Reconstruct prior comments only to understand intent; independently inspect
-  all materially changed behavior.
+- Assign head-pinned execution to the designated verification owner, within
+  repository/runtime permissions, when a claim depends on a real integration.
+- In blind discovery, defer evaluative prior feedback until sealing; follow the
+  orchestration reference for necessary early intent context and unblinded lanes.
 
 Record exact evidence and diff anchors. Distinguish verified behavior from
 inference, prediction, and unresolved assumptions.
@@ -137,9 +146,9 @@ Do not use a numeric score as a substitute for the operational story. Low
 probability alone does not make a risk non-blocking when the trigger is credible
 and the consequence is irreversible, silent, unsafe, or experiment-invalidating.
 
-When independent agents are available and the review is large enough to benefit,
-separate discovery and calibration. Give the calibrator the raw artifacts, review
-contract, and candidate ledger—not the desired dispositions.
+For full reviews, use the orchestration reference's sealed discovery and
+verification handoff. Give the calibrator raw artifacts and the review contract,
+not desired dispositions. Comparison-only work does not require a new ensemble.
 
 ## 6. Synthesize proportionate feedback
 
@@ -249,13 +258,21 @@ requires an explicit user command.
 
 ## 8. Publish and read back only when authorized
 
-After explicit authorization, audit the current head and comments, then choose
-the submitted review event from the inline severities:
+After explicit authorization, follow the publication conditions in
+[review-orchestration.md](references/review-orchestration.md#4-integrate-complete-results-at-the-current-head)
+for either final-complete publication or an early incremental verified blocker.
+That reference governs completion gates and the incremental exception; an
+incremental review is never final-complete. Choose the submitted event from inline
+severities:
 
 - any unresolved `(blocking)` comment → request changes;
 - only `(non-blocking)` comments → comment; and
 - approve only when the user explicitly requests approval or the surrounding
   workflow already establishes that decision.
+
+When GitHub prohibits requesting changes on the reviewer's own PR, use `COMMENT`
+with substantive `(blocking)` feedback and report the platform limitation. Never
+submit an empty status-only formal review; status belongs in the local report.
 
 Read the aggregate pull-request review decision before submission. Submitting
 `COMMENT` does not clear an earlier `CHANGES_REQUESTED` decision; report both the
@@ -278,7 +295,7 @@ the user authorizes the edit.
 ### Read-only or full review
 
 Present the review contract, candidate ledger, proposed feedback, deferred
-register, uncertainties, and publication state.
+register, uncertainties, publication state, and lane/verification completeness.
 
 ### Independent-review comparison
 
