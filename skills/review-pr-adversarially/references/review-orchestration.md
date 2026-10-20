@@ -146,12 +146,14 @@ their candidates against the deferred register.
 Review any other new head as a delta: the fixed findings and the commits since
 the last reviewed head (for a rebase, the range-diff), carrying earlier coverage
 of unchanged code with its original head. Delta re-review lanes get the fixed
-findings to verify against the new commits, and the deferred register and the
-rejected hypotheses as accepted contract facts. They raise a deferred item again
-only when its reconsideration trigger has fired, and a rejected hypothesis only
-when the new commits change the evidence that rejected it. When unsure whether a
-change is material, treat the head as a fresh baseline. On every new head, gates
-for an old head do not count as current-head passes.
+findings to verify against the new commits, the deferred register as accepted
+contract facts, and the rejected hypotheses with the evidence that rejected
+each. They raise a deferred item again only when its reconsideration trigger has
+fired, and a rejected hypothesis only when the new commits change the evidence
+that rejected it or the lane names a source the rejection did not weigh (see
+"Name the source of each input" in the risk-calibration reference). When unsure
+whether a change is material, treat the head as a fresh baseline. On every new
+head, gates for an old head do not count as current-head passes.
 
 ### Publication conditions
 
