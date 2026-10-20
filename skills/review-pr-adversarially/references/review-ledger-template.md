@@ -1,9 +1,11 @@
 # Review ledger template
 
 Copy this structure into local working notes for each PR. Fill orchestration
-sections for full reviews; for delta-only operations mark unneeded fields N/A
-with the operation scope. Link evidence once; other sections refer to its ID.
-Keep the ledger local until the user chooses what to share.
+sections for full reviews and delta re-reviews; a delta re-review keeps its
+roster, seal, and verification records. For comparisons and pending edits only,
+mark unneeded fields N/A with the operation scope. Link evidence once; other
+sections refer to its ID. Keep the ledger local until the user chooses what to
+share.
 
 ## Review contract
 
@@ -20,6 +22,7 @@ Keep the ledger local until the user chooses what to share.
 - Product stage:
 - Primary execution path:
 - Inputs and expected scale:
+- Trust boundary (writer of each input; hostile inputs):
 - Concurrency:
 - Target environments:
 - Operator supervision:
@@ -34,6 +37,7 @@ Keep the ledger local until the user chooses what to share.
 - Pilot questions:
 - Explicit non-goals or accepted debt:
 - Accepted debt source and factual boundary:
+- Review round and round budget:
 
 ### Assumptions and unknowns
 
@@ -43,12 +47,14 @@ Keep the ledger local until the user chooses what to share.
 ## Frozen packet and ownership
 
 ```md
-- Operation: Full / Fresh integration / Comparison / Pending edit / Publication
+- Operation: Full / Fresh integration / Delta re-review (new head) /
+  Comparison / Pending edit / Publication
 - PR:
 - Exact base/head:
 - Packet ID and sources: complete diff, PR, ticket/spec, standards, contract
-- Explicit roster override and scope (or default Sol + Grok):
-- Outcome owner (Sol discovery sealed before taking this role):
+- Review tier and who set it (caller, user, or contract):
+- Roster for that tier, or explicit override and scope:
+- Outcome owner (a lane seals its own discovery before taking this role):
 - Verification owner and execution permissions:
 - Bootstrap owner/head/result:
 - Independent code-review axes, if explicitly invoked:
@@ -58,13 +64,13 @@ Keep the ledger local until the user chooses what to share.
 
 Record actual identity from harness metadata, not just a role name. Keep initial
 artifacts private until all requested lanes seal. Link the sealed artifact and
-coverage record rather than copying their prose.
+coverage record rather than copying their prose. Add one row per lane the tier's
+roster requires, plus any optional lane launched.
 
 ```md
 | Lane | Requested provider/model/effort | Actual provider/model/effort; identity evidence | Head/packet | Seal time/artifact | Blind / Unblinded / Contaminated; source/time | Completed / Incomplete / Blocked | Coverage/gaps |
 |---|---|---|---|---|---|---|---|
-| Sol |  |  |  |  |  |  |  |
-| Grok |  |  |  |  |  |  |  |
+|  |  |  |  |  |  |  |  |
 
 - Escalation reason/scope, if any:
 - Optional timeout and remaining obligations, if any:
@@ -78,6 +84,8 @@ coverage record rather than copying their prose.
 |  |  |  |  |
 
 - Previous/new head:
+- Fresh baseline or delta re-review, and the reason:
+- Fixed findings, deferred register, and rejected hypotheses given to delta lanes:
 - New integration coverage renewed:
 - Evidence retained with relevance check:
 - Evidence invalidated and renewed:
@@ -197,6 +205,7 @@ Use `question(blocking):` for a genuine unresolved merge contract and
 - Review state: Local only / Pending / Published
 - Head revision:
 - Final-complete / Incremental / Incomplete; remaining obligations:
+- Review tier and its full roster completed:
 - Every requested lane completed and identity verified:
 - Seal/contamination records complete:
 - Complete current-head coverage and gaps accounted for:

@@ -1,9 +1,10 @@
 # Blind review orchestration
 
-Use this sequence for a full review, batch of PRs, or fresh integration review.
-For a comparison or pending-comment edit, verify the supplied delta and affected
-behavior; start a new ensemble only when changed behavior requires renewed full
-coverage. Each PR has its own packet, seals, ledger, and verification state.
+Use this sequence for a full review, batch of PRs, fresh integration review, or
+delta re-review of a new head (section 4). For a comparison or pending-comment
+edit, verify the supplied feedback or edits and the affected behavior; start a
+new ensemble only when changed behavior requires renewed full coverage. Each PR
+has its own packet, seals, ledger, and verification state.
 
 ## 1. Freeze the packet and resolve the roster
 
@@ -14,23 +15,64 @@ Give every discovery lane the same complete packet and access to relevant
 callers, tests, dependencies, and source contracts. File partitions or exclusive
 lenses cannot substitute for full behavioral coverage.
 
-The default discovery roster is **clean-context GPT-6.1 Sol plus Grok**, launched
-concurrently. Resolve these role names to actual available provider/model IDs
-and effort settings before launch; record the requested and actual identities
-and the harness metadata that verifies them. A role label or reviewer nickname
-is not model-identity evidence. Prefer a specialized Grok reviewer when available;
-otherwise explicitly select a Grok model in a general read-only reviewer. No
-particular harness tool name is required. If either requested model is unavailable
-or its identity cannot be verified, report the concrete blocker; do not substitute
-silently or record a completed pass. Honor explicit user roster overrides and
-record their scope. Kimi is not a default lane, including for high-risk reviews.
+The session that orchestrates the review launches the discovery lanes before
+discovery starts; this skill's text cannot launch them. An agent assigned
+orchestration that cannot launch every lane the tier requires returns the frozen
+packet and the missing lanes to its caller before launching any lane, when the
+caller can launch them, so one orchestrator owns every seal; otherwise it
+launches the lanes it can and reports the review incomplete at that tier.
+An agent assigned one discovery lane does discovery only (section 2): it does not
+resolve the roster, launch lanes, or return the packet, and it reports lane
+completion, not whole-review completion. Say so in each lane's prompt. Every
+lane runs in a fresh context that did not write the change; at the light tier,
+an orchestrating session that is itself such a context may be the one lane.
 
-Designate one outcome owner and one verification owner early. Primary Sol may
-own the outcome only after sealing its own discovery. Scheduling and outcome
-ownership do not add another full-code discovery pass. A separate clean Sol
-escalation is optional only for a high-risk or disputed causal chain or a coverage
-gap: record the specific reason and scope, then apply the same identity and seal
-rules. Do not escalate unconditionally.
+Take the review tier from the caller or user, or choose it from the review
+contract, and record it before launch. When the contract calls for a higher tier
+than the caller set, use it unless the user explicitly overrides it, and record
+why. The tier sets the roster; the product stage sets the blocker bar. Never
+lower the tier to fit the lanes that happen to be available.
+
+| Tier | Typical change | Discovery roster, launched concurrently |
+|---|---|---|
+| Light | Docs, tests, internal tooling, small reversible changes | One fresh-context lane, any model |
+| Standard | Other behavior changes (the default) | Fresh-context Claude + GPT-6.1 Sol |
+| Deep | Auth or security boundaries, money, irreversible data, external contracts | GPT-6.1 Sol + Grok, optionally plus fresh-context Claude |
+
+A tier's full roster, completed, is a completed pass at that tier. A pass at a
+lower tier than the recorded tier is incomplete for this review. An optional
+lane, once launched, is a requested lane. When the orchestrator cannot launch a
+Claude lane, a fresh-context lane from a model family other than Sol's may
+substitute, and a recorded substitute counts toward completion; record the
+substitution and its reason. The substitute is not Grok, which stays deep-only.
+
+Cross-model roles:
+
+| Work | Model |
+|---|---|
+| Cross-model code lane | GPT-6.1 Sol |
+| Second code lane, deep tier only | Grok |
+| Data, fact, and deliverable checks (not an additional default code-discovery lane) | GPT-6 Astra |
+
+Resolve these role names to actual available provider/model IDs and effort
+settings before launch; record the requested and actual identities and the
+harness metadata that verifies them. A role label or reviewer nickname is not
+model-identity evidence. Prefer a specialized Grok reviewer when available;
+otherwise explicitly select a Grok model in a general read-only reviewer. No
+particular harness tool name is required. If a lane the tier requires is
+unavailable or its identity cannot be verified, and no recorded substitution
+above applies, report the concrete blocker. Never substitute silently. Do not
+record a completed pass while a required lane remains unavailable or
+identity-unverified without a permitted, recorded substitution. Honor explicit
+user roster overrides and record their scope. Kimi is not a default lane,
+including for high-risk reviews.
+
+Designate one outcome owner and one verification owner early. A discovery lane,
+such as primary Sol, may own the outcome only after sealing its own discovery.
+Scheduling and outcome ownership do not add another full-code discovery pass. A
+separate clean Sol escalation is optional only for a high-risk or disputed causal
+chain or a coverage gap: record the specific reason and scope, then apply the
+same identity and seal rules. Do not escalate unconditionally.
 
 ## 2. Discover blind and seal privately
 
@@ -47,12 +89,15 @@ only the necessary context and mark that lane unblinded, with source and time.
 Record accidental contamination too; never describe such a lane as blind. When
 clean independence is required, obtain a later clean pass rather than relabeling
 the exposed lane. User feedback remains authoritative about intent, not evidence
-that a defect exists or does not exist.
+that a defect exists or does not exist. Delta re-review lanes are unblinded by
+design: section 4 gives them the fixed findings, the deferred register, and the
+rejected hypotheses, so record all three as the unblinding source.
 
 Return compact raw candidates: preconditions, causal path, consequence, exact
 evidence/anchor, proposed reproduction, and coverage gaps. Include all supported
-candidates; no fixed quota may truncate actual findings. Record rejected claims
-briefly with their disconfirming evidence, not narrative rejection essays.
+candidates, including those whose input source is not yet found; no fixed quota
+may truncate actual findings. Record rejected claims briefly with their
+disconfirming evidence, not narrative rejection essays.
 
 ## 3. Verify once, then calibrate
 
@@ -88,11 +133,31 @@ required model to declare success. Report incomplete reviews as such. Keep a
 coverage map for the complete diff, changed behavior, relevant callers, spec,
 and standards; close or explicitly expose each gap.
 
-A new head is a fresh integration baseline. Refresh the packet, selectively
+The outcome owner classifies each new head and records the reason. A new head
+that materially changes behavior (a new state, path, identity, or error scope)
+is a fresh integration baseline. A merge or rebase of the base is material when
+the base changed code the PR touches or calls. Refresh the packet, selectively
 invalidate candidate and gate evidence affected by the changes, and renew full
 coverage of the resulting integration, not just prior threads. Preserve still
 valid evidence with its original head and a recorded current-head relevance
-check; gates for an old head do not count as current-head passes.
+check. Fresh-baseline lanes stay blind; the calibrator, not the lanes, checks
+their candidates against the deferred register.
+
+Review any other new head as a delta: the fixed findings and the commits since
+the last reviewed head (for a rebase, the range-diff), carrying earlier coverage
+of unchanged code with its original head. Delta re-review lanes get the fixed
+findings to verify against the new commits, the deferred register as accepted
+contract facts, and the rejected hypotheses with the evidence that rejected
+each. They raise a deferred item again only when its reconsideration trigger has
+fired, which includes finding that the trigger's condition already holds. They
+raise a rejected hypothesis again only when the new commits change the evidence
+that rejected it, or the lane brings evidence the rejection did not weigh that
+overturns it: a named source, or a ticket or spec promise, for a reachability
+rejection (see "Name the source of each input" in the risk-calibration
+reference); otherwise verified behavior, an authoritative contract, or an unmet
+ticket or spec requirement. Restating the rejected claim is not new evidence.
+When unsure whether a change is material, treat the head as a fresh baseline. On
+every new head, gates for an old head do not count as current-head passes.
 
 ### Publication conditions
 

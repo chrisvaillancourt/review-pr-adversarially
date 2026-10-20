@@ -3,13 +3,18 @@
 An agent skill for evidence-backed adversarial PR reviews, risk calibration,
 review comparisons, and deliberate publication of approved feedback.
 
-Full reviews default to concurrent, clean-context **GPT-6.1 Sol + Grok** discovery
-over the same complete, head-pinned diff and relevant callers. Kimi is not a
-default lane. The outcome owner calibrates sealed findings after evidence
-verification; all requested lanes and required relevant gates must complete
-before final-complete publication. Comparisons and pending edits remain delta-scoped
-unless changed behavior warrants a new full review. Explicit roster overrides
-are supported; unavailable requested models are reported, never silently replaced.
+The session that orchestrates a full review launches concurrent, clean-context
+discovery lanes over the same complete, head-pinned diff and relevant callers.
+The roster follows the review tier: one fresh lane for light changes,
+**fresh-context Claude + GPT-6.1 Sol** for standard changes, and
+**GPT-6.1 Sol + Grok** for deep ones. Kimi is not a default lane. The outcome
+owner calibrates sealed findings after evidence verification; all requested lanes
+and required relevant gates must complete before final-complete publication. New
+heads that don't materially change behavior get a delta re-review. Comparisons
+and pending edits remain scoped to the supplied feedback or edits unless changed
+behavior warrants a new full review. Explicit roster overrides are supported;
+unavailable requested models are reported, and any substitution is recorded,
+never silent.
 
 ## Source layout
 

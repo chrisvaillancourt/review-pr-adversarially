@@ -47,6 +47,25 @@ Mark each link:
 If a required link is assumed or unknown, investigate it or frame it as a
 question. Do not present the full chain as established fact.
 
+## Name the source of each input
+
+A reachability claim names its source: a real call path, an enforced schema, a
+supported contract, or observed upstream data that produces the triggering
+input. Tests, fixtures, and example docs alone do not show that the input
+arrives; a test can verify the behavior once it does. Without a named source,
+the reachability link is Assumed. Code the reviewer cannot read is an evidence
+gap, not proof either way: when the would-be source is such code, mark the link
+Unknown and investigate it or ask. Judge each input on its own: one member of a
+class can be reachable while another is not. An input the ticket or spec
+promises to handle is a requirement: judge it against the spec, and lack of
+observed traffic does not waive it.
+
+Disposition follows the whole operational story above, reachability included;
+record evidence quality separately. Never set a severity floor for a fixed list
+of input cases, in a disposition or in a review rule you propose. Discovery
+still reports candidates whose source it could not find; this rule applies
+during calibration.
+
 ## Choose the disposition
 
 ### Merge blocker
@@ -110,7 +129,12 @@ Common reasons to avoid blocking:
 - the state is bounded, visible, and cheaply recoverable;
 - the issue affects optional or unused behavior;
 - prevention would build speculative machinery that the pilot is intended to
-  inform.
+  inform; or
+- the only effect is a loud, fail-closed refusal of an input with no named
+  source (see "Name the source of each input"): record it as deferred hardening
+  by default, to reconsider when a source appears. This does not cover a miss
+  that is silent or reads as success, or an input the ticket or spec promises to
+  handle; weigh those under the reasons to block below or against the spec.
 
 Common reasons to block despite low frequency:
 

@@ -17,15 +17,20 @@ review contract.
   - `update` or `edit` a pending review authorizes pending mutations and readback,
     but the review remains pending;
   - `post`, `publish`, or `submit` authorizes publication after a fresh audit.
-- Treat a materially changed review-response commit as a fresh integration
-  baseline, not only as resolution of previous threads.
+- Treat any new head that materially changes behavior as a fresh integration
+  baseline, not only as resolution of previous threads. Review other new heads
+  as delta re-reviews, using the orchestration reference's materiality rules.
 
-For **full reviews, batch reviews, and fresh integration reviews**, read and
-follow [review-orchestration.md](references/review-orchestration.md) before
-discovery: concurrent blind, full-coverage GPT-6.1 Sol + Grok is the default.
-Comparisons and pending edits stay delta-scoped unless changed behavior warrants
-a new full review. Explicit roster overrides remain explicit; Kimi is not a
-default or automatic high-risk lane.
+For **full reviews, batch reviews, fresh integration reviews, and delta
+re-reviews**, read and follow
+[review-orchestration.md](references/review-orchestration.md) before discovery.
+The session that orchestrates the review launches the discovery lanes; this
+skill's text cannot start them. The roster follows the review tier (light,
+standard, or deep) in that reference, and a tier's full roster is a completed
+pass at that tier. Comparisons and pending edits stay scoped to the supplied
+feedback or edits unless changed behavior warrants a new full review. Explicit
+roster overrides remain explicit; Kimi is not a default or automatic high-risk
+lane.
 
 ## 1. Establish the review contract
 
@@ -43,8 +48,18 @@ Capture:
 - retry, rollback, and manual-recovery options;
 - cost of failed, repeated, duplicated, or corrupted work;
 - conditions that would invalidate the experiment or release;
-- ticket/spec requirements and relevant repository standards; and
-- explicit non-goals and factual accepted debt.
+- ticket/spec requirements and relevant repository standards;
+- explicit non-goals and factual accepted debt;
+- trust boundary: who writes each input, and which inputs are hostile. The
+  team's own services and internal artifacts are not hostile by default. That
+  default does not cover vendor, customer, or user-supplied data, even when an
+  internal service relays it, so name the writer of each input. Not hostile does
+  not mean well-formed: internal writers can still send stale or older-schema
+  data; and
+- round budget: after the second review round, keep the acceptance target fixed;
+  a new blocker then needs a named source (see the risk-calibration reference)
+  showing it is reachable in the intended path, or must be an unmet ticket or
+  spec requirement. A late find in older code still counts when it has one.
 
 Define the blocker gates before deep discovery. For a supervised pre-production
 MVP, start with these gates unless the evidence requires a different bar:
@@ -156,6 +171,16 @@ By default, propose author-facing comments only for merge blockers and concrete
 rollout prerequisites. Keep pilot evidence and deferred hardening in the local
 ledger unless the user asks to share them or they provide important context.
 
+When most new findings in a round come from response commits, or repeat a class
+from an earlier round, stop proposing per-finding patches. Ask for the invariant,
+or a state or error table, in one design-level comment. For an equivalence or
+redaction class that keeps growing, ask for a rule that refuses the whole class.
+
+Before asking for a third fix round, check proportion: compare the diff with the
+ticket or spec's scope and list the lines and branches each review round added.
+If the PR grew mostly from review-response guards, stop requesting patches and
+bring the approach, with any open blockers, to the user or approver.
+
 Before drafting a comment, verify:
 
 - the factual claim is supported;
@@ -189,6 +214,12 @@ or documented guidance before drafting. If no convention exists, default to:
 Every `(non-blocking)` comment states why merge remains safe, what may be
 deferred, and the exact condition that makes follow-up required.
 
+When repository standards set a severity floor for listed cases, apply it to the
+author-facing label, keep the calibrated disposition in the ledger, and tell the
+user where they differ. Do not drop a case the repository requires you to
+report, and do not treat a repository priority label, such as P1, as a merge
+blocker by itself.
+
 ### Give each finding one author-facing home
 
 - Give each code-local causal mechanism one inline thread.
@@ -197,7 +228,9 @@ deferred, and the exact condition that makes follow-up required.
 - Use a new inline thread when a response fix introduces a distinct mechanism at
   another persistence, recovery, deployment, or downstream boundary, even when
   both mechanisms violate the same broad invariant. Link the earlier thread when
-  that context helps.
+  that context helps. When most new findings come from response commits or
+  repeat an earlier class (see above), lead with the design-level comment and
+  link these threads from it.
 - Use the review body only for unique, author-actionable feedback that cannot be
   anchored to the diff.
 - Leave the review body empty when every finding is inline.
@@ -205,7 +238,8 @@ deferred, and the exact condition that makes follow-up required.
 The local report may contain the contract, ledger, dispositions, uncertainties,
 and publication state. The GitHub review body contains only unique global
 feedback—not workflow status, a review title, skill terminology, a severity
-legend, publication metadata, or an inline-comment rollup.
+legend, publication metadata, or an inline-comment rollup. A design-level comment
+may cite the threads its invariant covers; that is not a rollup.
 
 ### Draft comments with the repository convention
 
@@ -295,7 +329,8 @@ the user authorizes the edit.
 ### Read-only or full review
 
 Present the review contract, candidate ledger, proposed feedback, deferred
-register, uncertainties, publication state, and lane/verification completeness.
+register, uncertainties, publication state, review tier, and lane/verification
+completeness.
 
 ### Independent-review comparison
 
