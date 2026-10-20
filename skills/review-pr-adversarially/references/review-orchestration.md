@@ -149,11 +149,15 @@ of unchanged code with its original head. Delta re-review lanes get the fixed
 findings to verify against the new commits, the deferred register as accepted
 contract facts, and the rejected hypotheses with the evidence that rejected
 each. They raise a deferred item again only when its reconsideration trigger has
-fired, and a rejected hypothesis only when the new commits change the evidence
-that rejected it or the lane names a source the rejection did not weigh (see
-"Name the source of each input" in the risk-calibration reference). When unsure
-whether a change is material, treat the head as a fresh baseline. On every new
-head, gates for an old head do not count as current-head passes.
+fired, which includes finding that the trigger's condition already holds. They
+raise a rejected hypothesis again only when the new commits change the evidence
+that rejected it, or the lane brings evidence the rejection did not weigh that
+overturns it: a named source, or a ticket or spec promise, for a reachability
+rejection (see "Name the source of each input" in the risk-calibration
+reference); otherwise verified behavior, an authoritative contract, or an unmet
+ticket or spec requirement. Restating the rejected claim is not new evidence.
+When unsure whether a change is material, treat the head as a fresh baseline. On
+every new head, gates for an old head do not count as current-head passes.
 
 ### Publication conditions
 
