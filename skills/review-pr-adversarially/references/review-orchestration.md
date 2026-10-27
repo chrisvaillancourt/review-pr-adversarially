@@ -117,6 +117,14 @@ bootstrap or gates per lane. Record command, owner, head, result, and evidence.
 A passing suite alone does not prove a causal claim; use the smallest relevant
 smoke/reproduction and qualify unexercised links.
 
+The verification owner also runs the test audit's mutations. Apply each break to
+a scratch copy of the head (for example, a `git archive` export) rather than a
+worktree other lanes are reading, run it with the review's environment, and
+first confirm that imports resolve to the copy. Make exact-match edits only after
+checking that the anchor occurs once, so a mutation cannot also change an
+identical line elsewhere, such as inside a test's embedded script. Record each
+mutation, the tests run, and whether the break was caught or survived.
+
 After sealing, the outcome owner receives raw candidates and evidence without
 supplied desired dispositions and applies the skill's risk-calibration reference.
 Keep bot threads as a separate source, map them to causal mechanisms, and dedup
