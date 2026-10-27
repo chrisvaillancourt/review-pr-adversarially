@@ -130,6 +130,22 @@ conflict handling. A tested application invariant may still reject valid
 upstream data. Do not infer that the highest version is authoritative without a
 source contract.
 
+Check for reimplementation: does the diff rebuild something the framework, a
+locked dependency, or the repository already provides? Check the version the
+lockfile pins, not the latest documentation. When a domain skill for the
+framework is installed, load it for this check. A reuse candidate names the
+built-in, the version that provides it, and the code the author could drop.
+
+Audit every new or changed test. Each must fail on a plausible break of the
+behavior it names. Flag tests that cannot fail, duplicates of another test,
+change-detector tests that pin today's values or structure instead of behavior,
+and contract defaults that no test pins. Every claim about what a test does or
+cannot do needs a mutation result: the named break applied to a scratch copy of
+the head, the tests run, and the result (caught or survives) recorded. Reasoning
+from framework semantics is not enough; until a mutation runs, the claim is
+Assumed. Discovery lanes propose the mutation; the verification owner runs it
+(see the orchestration reference).
+
 Add candidates to the ledger before drafting comments. A possible code path is a
 hypothesis, not yet a blocker. Do not discard a real concern merely because it is
 unlikely; preserve it for calibration.
@@ -138,6 +154,15 @@ unlikely; preserve it for calibration.
 
 Read [risk-calibration.md](references/risk-calibration.md) before assigning any
 disposition. Evaluate factual validity separately from review priority.
+
+Before assigning dispositions, read how the change actually runs: the deployment
+or runtime configuration, from the repository or system that deploys it, at its
+remote default branch rather than a local checkout. Record in the ledger's
+operating model which flags are enabled in which environment and which settings
+each environment sets, with the source and revision. A risk behind a flag no
+environment enables, or behind a default every environment overrides, rarely
+blocks merge; see the disabled-path examples in the calibration reference. When
+the configuration cannot be read, mark the dependent links Unknown.
 
 For each candidate:
 
@@ -170,6 +195,13 @@ not desired dispositions. Comparison-only work does not require a new ensemble.
 By default, propose author-facing comments only for merge blockers and concrete
 rollout prerequisites. Keep pilot evidence and deferred hardening in the local
 ledger unless the user asks to share them or they provide important context.
+Test debt from the test audit (a test that cannot fail, a duplicate test) is the
+exception: share it as a nitpick, because such a test gives false confidence to
+every later change.
+
+Drop a comment that asks nothing of the author, such as a note that something is
+fine for this PR. Keep a risk that is possible but operationally unlikely at the
+declared stage in the deferred register, not in a non-blocking comment.
 
 When most new findings in a round come from response commits, or repeat a class
 from an earlier round, stop proposing per-finding patches. Ask for the invariant,
@@ -200,19 +232,24 @@ identifiers.
 
 Internal dispositions are analysis vocabulary. Author-facing comments use the
 repository's established convention; inspect recent repository review comments
-or documented guidance before drafting. If no convention exists, default to:
+or documented guidance before drafting. If no convention exists, default to
+Conventional Comments, `label (decorations): subject`, with a space before the
+decorations:
 
-- **Merge blocker** → `issue(blocking):` or `question(blocking):`.
+- **Merge blocker** → `issue (blocking):` or `question (blocking):`.
 - **Rollout prerequisite** → `(blocking)` when the changed code can activate
   without the prerequisite, or when the current PR contract requires it before
   merge; otherwise `(non-blocking)` with the exact activation, deployment, or
   workload boundary that makes it required.
 - **Pilot evidence** or **Deferred hardening** → local only by default. If shared,
   use `(non-blocking)` and state the reconsideration trigger.
+- **Test debt** from the test audit → `nitpick (non-blocking):`, citing the
+  mutation that survives or the test it duplicates.
 - **Invalid or unsupported** → no author-facing comment.
 
-Every `(non-blocking)` comment states why merge remains safe, what may be
-deferred, and the exact condition that makes follow-up required.
+Every `(non-blocking)` comment other than a nitpick states why merge remains
+safe, what may be deferred, and the exact condition that makes follow-up
+required.
 
 When repository standards set a severity floor for listed cases, apply it to the
 author-facing label, keep the calibrated disposition in the ledger, and tell the
@@ -244,28 +281,50 @@ may cite the threads its invariant covers; that is not a rollup.
 ### Draft comments with the repository convention
 
 ```md
-issue(blocking): <required outcome>
+issue (blocking): <required outcome>
 
 <Verified behavior, credible operational scenario, and consequence.>
 <Focused regression or acceptance evidence.>
 ```
 
 ```md
-question(blocking): <specific unresolved contract>
+question (blocking): <specific unresolved contract>
 
 <Why the answer determines whether the PR can merge.>
 <Acceptable evidence or implementation outcomes.>
 ```
 
 ```md
-suggestion(non-blocking): <deferred improvement>
+suggestion (non-blocking): <deferred improvement>
 
 <Verified weakness and why merge remains safe.>
 This can be deferred until <boundary>; address it before <trigger>.
 ```
 
+```md
+nitpick (non-blocking): <test> <cannot catch the named break, or duplicates another>
+
+<The mutation applied and the still-passing result, or the duplicated test.>
+```
+
 Use questions for genuine unknowns. Do not phrase an unverified prediction as an
 asserted defect.
+
+When a fix fits the anchored lines, give it as a GitHub `suggestion` block so the
+author can apply it in one click. The block replaces exactly the anchored lines,
+so anchor the comment to the lines it replaces and keep their indentation. When
+the fix spans other lines or files, use a plain code block and say where it
+goes. Section 7 runs every block before publication.
+
+````md
+issue (blocking): <required outcome>
+
+<Verified behavior and consequence.>
+
+```suggestion
+<replacement for exactly the anchored lines>
+```
+````
 
 ## 7. Audit comments and anchors
 
@@ -282,6 +341,11 @@ Before any pending-review edit or publication:
   non-blocking comment has a deferral boundary;
 - anchor each inline comment to the smallest current-diff line or range that
   contains the causal behavior;
+- apply every `suggestion` block exactly as written, over exactly its anchored
+  lines, to a scratch copy of the head, then run the relevant tests, linter, and
+  type checker; fix or drop any block that fails one of them;
+- check every claim about third-party behavior in that dependency's source or
+  documentation at the locked version;
 - remove stale wording, exaggerated consequences, and comments whose
   disposition changed;
 - keep the review body empty unless unique global feedback requires it; and
@@ -290,9 +354,29 @@ Before any pending-review edit or publication:
 Pending-review authorization ends after mutation and readback. Publication still
 requires an explicit user command.
 
+### Run the final gate before asking to publish
+
+Run the gate on the comment set meant for publication, so the user approves the
+validated text:
+
+1. **Clarity pass on prose only.** Tighten the prose, for example with the
+   `unslop` and `writing-clearly-and-concisely` skills when installed. Leave
+   fenced blocks, identifiers, and anchors alone, and check that every fenced
+   block is byte-identical before and after the pass.
+2. **Cross-model check of the frozen set.** Freeze the bodies, anchors, and
+   head. Send the frozen set and its evidence to one validator in the
+   orchestration reference's data, fact, and deliverable checks role; comments
+   going to a colleague are a deliverable. Ask for wrong or unsupported claims,
+   overstatement, and anchors that do not hold, and verify each finding before
+   acting on it.
+3. **Delta round for later changes.** Send any comment added or materially
+   reworded after the check to the same validator session, resumed, as a delta
+   round. Do not publish text the validator has not seen.
+
 ## 8. Publish and read back only when authorized
 
-After explicit authorization, follow the publication conditions in
+After explicit authorization and a passed final gate (section 7), follow the
+publication conditions in
 [review-orchestration.md](references/review-orchestration.md#4-integrate-complete-results-at-the-current-head)
 for either final-complete publication or an early incremental verified blocker.
 That reference governs completion gates and the incremental exception; an

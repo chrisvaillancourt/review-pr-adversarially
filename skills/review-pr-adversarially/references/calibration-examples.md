@@ -94,7 +94,8 @@ feature gate keeps that path disabled in every current environment.
 
 - Factual status: verified against deployment policy and the activation guard.
 - Disposition: **Rollout prerequisite** because merge cannot exercise the path.
-- Author feedback: `suggestion(non-blocking):` with the exact enablement boundary.
+- Author feedback: `suggestion (non-blocking):` with the exact enablement
+  boundary.
 - Reconsideration trigger: before enabling the path in an affected environment.
 
 ## Prerequisite on an active path
@@ -105,7 +106,7 @@ by default, with no deployment or runtime guard.
 - Factual status: verified against deployment policy and active configuration.
 - Disposition: **Rollout prerequisite** internally, but merge leaves the path
   activatable without containment.
-- Author feedback: `issue(blocking):` because the prerequisite or an enforceable
+- Author feedback: `issue (blocking):` because the prerequisite or an enforceable
   guard is required before merge.
 - Focused validation: prove the required permission works or prove the path
   remains disabled in every environment until it does.
@@ -126,3 +127,19 @@ or recovery rerun can load records materialized while the gate was enabled.
   failure into false absence.
 - Focused validation: exercise a partial rerun with persisted enabled-path data
   while the gate is disabled.
+
+## Test passes with its behavior removed
+
+A new test names a fallback path, but it still passes when a scratch copy
+deletes the fallback, because its fixture never reaches that path.
+
+- Factual status: verified by mutation; the break survives.
+- MVP relevance: the behavior may be correct, but the test gives false
+  confidence and will mislead later changes.
+- Disposition: **Deferred hardening**, shared as `nitpick (non-blocking):` with
+  the surviving mutation.
+- Escalate when the untested behavior is itself a merge gate, such as the only
+  check that a failure is not recorded as success: the missing regression is
+  then part of that blocker.
+- Do not call a test unable to fail without the mutation result; reasoning from
+  framework semantics is often wrong.

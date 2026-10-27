@@ -21,6 +21,8 @@ share.
 
 - Product stage:
 - Primary execution path:
+- Runtime configuration (source and revision; flags enabled and settings set
+  per environment):
 - Inputs and expected scale:
 - Trust boundary (writer of each input; hostile inputs):
 - Concurrency:
@@ -107,6 +109,21 @@ per unchanged head; distinguish a passing gate from proof of a candidate.
 - Scoped credentials/network/paid authorization, if needed:
 ```
 
+## Test audit
+
+One row per new or changed test claim. A claim about what a test does or cannot
+do stays Assumed until its mutation has run. Record the mutation as the exact
+edit, its anchor count, and the scratch copy it ran in.
+
+```md
+| Test | Behavior named | Mutation | Tests run | Caught / Survives | Candidate |
+|---|---|---|---|---|---|
+|  |  |  |  |  |  |
+
+- Duplicate or change-detector tests, with the test each duplicates:
+- Contract defaults no test pins:
+```
+
 ## Lane attribution and usage
 
 Count unique confirmed mechanisms once globally; retain corroboration attribution.
@@ -182,14 +199,15 @@ Map every proposed comment back to a calibrated candidate.
 ```md
 ### F-01 — `path/to/file.py:42-45`
 
-issue(blocking): <required outcome>
+issue (blocking): <required outcome>
 
 <Verified behavior, credible operational scenario, and consequence.>
 <Focused regression or acceptance evidence.>
 ```
 
-Use `question(blocking):` for a genuine unresolved merge contract and
-`suggestion(non-blocking):` only with an explicit deferral boundary.
+Use `question (blocking):` for a genuine unresolved merge contract,
+`suggestion (non-blocking):` only with an explicit deferral boundary, and
+`nitpick (non-blocking):` for test debt with its mutation result.
 
 ## Deferred register
 
@@ -222,7 +240,13 @@ Use `question(blocking):` for a genuine unresolved merge contract and
 - Every body matches the ledger:
 - Every anchor is on the current diff:
 - Blocking/non-blocking labels match calibrated dispositions:
-- Every non-blocking comment states its deferral boundary:
+- Every non-blocking comment other than a nitpick states its deferral boundary:
+- Every `suggestion` block applied as written in a scratch copy; tests, linter,
+  and type checker results:
+- Third-party behavior claims checked in source or docs at the locked version:
+- Prose-only clarity pass done; fenced blocks byte-identical:
+- Frozen-set cross-model check: validator identity, session, head, findings:
+- Delta round for comments added or reworded after the check:
 - Explicit publication approval received:
 - Submission event matches unresolved inline severity:
 - Own-PR request-changes limitation and COMMENT/blocking-label handling:

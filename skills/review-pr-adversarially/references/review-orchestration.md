@@ -52,7 +52,7 @@ Cross-model roles:
 |---|---|
 | Cross-model code lane | GPT-6.1 Sol |
 | Second code lane, deep tier only | Grok |
-| Data, fact, and deliverable checks (not an additional default code-discovery lane) | GPT-6 Astra |
+| Data, fact, and deliverable checks, including the final comment-set check (not an additional default code-discovery lane) | GPT-6 Astra |
 
 Resolve these role names to actual available provider/model IDs and effort
 settings before launch; record the requested and actual identities and the
@@ -116,6 +116,14 @@ incremental feedback. Share the head-pinned results rather than repeating
 bootstrap or gates per lane. Record command, owner, head, result, and evidence.
 A passing suite alone does not prove a causal claim; use the smallest relevant
 smoke/reproduction and qualify unexercised links.
+
+The verification owner also runs the test audit's mutations. Apply each break to
+a scratch copy of the head (for example, a `git archive` export) rather than a
+worktree other lanes are reading, run it with the review's environment, and
+first confirm that imports resolve to the copy. Make exact-match edits only after
+checking that the anchor occurs once, so a mutation cannot also change an
+identical line elsewhere, such as inside a test's embedded script. Record each
+mutation, the tests run, and whether the break was caught or survived.
 
 After sealing, the outcome owner receives raw candidates and evidence without
 supplied desired dispositions and applies the skill's risk-calibration reference.
