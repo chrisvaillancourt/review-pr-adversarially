@@ -245,7 +245,8 @@ Use `question (blocking):` for a genuine unresolved merge contract,
   and type checker results:
 - Third-party behavior claims checked in source or docs at the locked version:
 - Prose-only clarity pass done; fenced blocks byte-identical:
-- Frozen-set cross-model check: validator identity, session, head, findings:
+- Frozen-set cross-model check: validator identity (differs from every drafting
+  model), session, head, findings:
 - Delta round for comments added or reworded after the check:
 - Explicit publication approval received:
 - Submission event matches unresolved inline severity:

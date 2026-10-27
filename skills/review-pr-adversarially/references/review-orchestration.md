@@ -52,7 +52,7 @@ Cross-model roles:
 |---|---|
 | Cross-model code lane | GPT-6.1 Sol |
 | Second code lane, deep tier only | Grok |
-| Data, fact, and deliverable checks, including the final comment-set check (not an additional default code-discovery lane) | GPT-6 Astra |
+| Data, fact, and deliverable checks (not an additional default code-discovery lane) | GPT-6 Astra |
 
 Resolve these role names to actual available provider/model IDs and effort
 settings before launch; record the requested and actual identities and the

@@ -201,9 +201,10 @@ exception: share it as a nitpick, because such a test gives false confidence to
 every later change.
 
 Drop a comment that asks nothing of the author, such as a note that something is
-fine for this PR. Keep a risk that is possible but operationally unlikely at the
-declared stage in the deferred register, not in a non-blocking comment, unless
-the user asks to share it.
+fine for this PR. When calibration has already made a risk non-blocking because
+it is operationally unlikely at the declared stage, keep it in the deferred
+register, not in a non-blocking comment, unless the user asks to share it. Low
+likelihood never demotes a blocker on its own (section 5).
 
 When most new findings in a round come from response commits, or repeat a class
 from an earlier round, stop proposing per-finding patches. Ask for the invariant,
@@ -308,6 +309,7 @@ This can be deferred until <boundary>; address it before <trigger>.
 nitpick (non-blocking): <test> <cannot catch the named break, or duplicates another>
 
 <The mutation applied and the still-passing result, or the duplicated test.>
+<Strengthen the test so it fails on that break, or remove it.>
 ```
 
 Use questions for genuine unknowns. Do not phrase an unverified prediction as an
@@ -317,7 +319,7 @@ When a fix fits the anchored lines, give it as a GitHub `suggestion` block so th
 author can apply it in one click. The block replaces exactly the anchored lines,
 so anchor the comment to the lines it replaces and keep their indentation. When
 the fix spans other lines or files, use a plain code block and say where it
-goes. Section 7 runs every block before publication.
+goes. Section 7 runs every `suggestion` block before publication.
 
 ````md
 issue (blocking): <required outcome>
@@ -367,15 +369,18 @@ validated text:
    fenced blocks, identifiers, and anchors alone, and check that every fenced
    block is byte-identical before and after the pass.
 2. **Cross-model check of the frozen set.** Freeze the bodies, anchors, and
-   head. Send the frozen set and its evidence to one validator in the
-   orchestration reference's data, fact, and deliverable checks role; comments
-   going to a colleague are a deliverable. Ask for wrong or unsupported claims,
-   overstatement, and anchors that do not hold, and verify each finding before
-   acting on it. Rerun the section 7 block checks on any fenced block that
-   changes.
+   head. Send the frozen set and its evidence to one validator whose verified
+   model identity differs from every model that drafted the comments. Default
+   to the orchestration reference's data, fact, and deliverable checks role;
+   when that role resolves to a drafting model, choose another model and record
+   why. Ask for wrong or unsupported claims, overstatement, and anchors that do
+   not hold, and verify each finding before acting on it. Rerun the section 7
+   block checks on any fenced block that changes.
 3. **Delta round for later changes.** Send any comment added or materially
-   reworded after the check to the same validator session, resumed, as a delta
-   round. Do not publish text the validator has not seen. When the validator is
+   reworded after the check to the same validator as a delta round: resume its
+   session when the harness supports that; otherwise give a new session the
+   frozen set and the earlier findings. Do not publish text the validator has
+   not seen. When the validator is
    unavailable, report the blocker as for an unavailable lane; do not
    substitute silently.
 
