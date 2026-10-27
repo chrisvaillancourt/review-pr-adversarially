@@ -136,8 +136,9 @@ deletes the fallback, because its fixture never reaches that path.
 - Factual status: verified by mutation; the break survives.
 - MVP relevance: the behavior may be correct, but the test gives false
   confidence and will mislead later changes.
-- Disposition: **Deferred hardening**, shared as `nitpick (non-blocking):` with
-  the surviving mutation.
+- Disposition: **Deferred hardening**, shared by default as
+  `nitpick (non-blocking):` with the surviving mutation and no reconsideration
+  trigger.
 - Escalate when the untested behavior is itself a merge gate, such as the only
   check that a failure is not recorded as success: the missing regression is
   then part of that blocker.

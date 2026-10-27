@@ -116,7 +116,7 @@ do stays Assumed until its mutation has run. Record the mutation as the exact
 edit, its anchor count, and the scratch copy it ran in.
 
 ```md
-| Test | Behavior named | Mutation | Tests run | Caught / Survives | Candidate |
+| Test | Behavior | Mutation | Tests run | Caught/Survives/Unrun | Candidate |
 |---|---|---|---|---|---|
 |  |  |  |  |  |  |
 

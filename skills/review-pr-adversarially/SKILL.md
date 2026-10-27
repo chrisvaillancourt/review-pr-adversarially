@@ -156,10 +156,11 @@ Read [risk-calibration.md](references/risk-calibration.md) before assigning any
 disposition. Evaluate factual validity separately from review priority.
 
 Before assigning dispositions, read how the change actually runs: the deployment
-or runtime configuration, from the repository or system that deploys it, at its
-remote default branch rather than a local checkout. Record in the ledger's
-operating model which flags are enabled in which environment and which settings
-each environment sets, with the source and revision. A risk behind a flag no
+or runtime configuration, from the repository or system that deploys it, at the
+deployed revision (else its remote default branch), not a local checkout.
+Record in the ledger's operating model which flags are enabled in which
+environment and which settings each environment sets, with the source and
+revision. A risk behind a flag no
 environment enables, or behind a default every environment overrides, rarely
 blocks merge; see the disabled-path examples in the calibration reference. When
 the configuration cannot be read, mark the dependent links Unknown.
@@ -201,7 +202,8 @@ every later change.
 
 Drop a comment that asks nothing of the author, such as a note that something is
 fine for this PR. Keep a risk that is possible but operationally unlikely at the
-declared stage in the deferred register, not in a non-blocking comment.
+declared stage in the deferred register, not in a non-blocking comment, unless
+the user asks to share it.
 
 When most new findings in a round come from response commits, or repeat a class
 from an earlier round, stop proposing per-finding patches. Ask for the invariant,
@@ -243,8 +245,9 @@ decorations:
   workload boundary that makes it required.
 - **Pilot evidence** or **Deferred hardening** → local only by default. If shared,
   use `(non-blocking)` and state the reconsideration trigger.
-- **Test debt** from the test audit → `nitpick (non-blocking):`, citing the
-  mutation that survives or the test it duplicates.
+- **Test debt** from the test audit (deferred hardening, shared by default) →
+  `nitpick (non-blocking):`, citing the mutation that survives or the test it
+  duplicates, with no reconsideration trigger.
 - **Invalid or unsupported** → no author-facing comment.
 
 Every `(non-blocking)` comment other than a nitpick states why merge remains
@@ -338,14 +341,14 @@ Before any pending-review edit or publication:
   delta;
 - confirm every causal mechanism has one author-facing home;
 - confirm severity labels follow the repository convention and every
-  non-blocking comment has a deferral boundary;
+  non-blocking comment other than a nitpick has a deferral boundary;
 - anchor each inline comment to the smallest current-diff line or range that
   contains the causal behavior;
 - apply every `suggestion` block exactly as written, over exactly its anchored
   lines, to a scratch copy of the head, then run the relevant tests, linter, and
   type checker; fix or drop any block that fails one of them;
-- check every claim about third-party behavior in that dependency's source or
-  documentation at the locked version;
+- check every claim about third-party behavior in that dependency's source at
+  the locked version, or in its documentation when the source is unavailable;
 - remove stale wording, exaggerated consequences, and comments whose
   disposition changed;
 - keep the review body empty unless unique global feedback requires it; and
@@ -368,10 +371,13 @@ validated text:
    orchestration reference's data, fact, and deliverable checks role; comments
    going to a colleague are a deliverable. Ask for wrong or unsupported claims,
    overstatement, and anchors that do not hold, and verify each finding before
-   acting on it.
+   acting on it. Rerun the section 7 block checks on any fenced block that
+   changes.
 3. **Delta round for later changes.** Send any comment added or materially
    reworded after the check to the same validator session, resumed, as a delta
-   round. Do not publish text the validator has not seen.
+   round. Do not publish text the validator has not seen. When the validator is
+   unavailable, report the blocker as for an unavailable lane; do not
+   substitute silently.
 
 ## 8. Publish and read back only when authorized
 
