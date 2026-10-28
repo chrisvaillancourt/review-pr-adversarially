@@ -55,7 +55,9 @@ share.
 - Exact base/head:
 - Packet ID and sources: complete diff, PR, ticket/spec, standards, contract
 - Review tier and who set it (caller, user, or contract):
-- Roster for that tier, or explicit override and scope:
+- Roster for that tier and its source (user instructions, defaults, or explicit
+  override and scope):
+- Final-gate validator, resolved before discovery:
 - Outcome owner (a lane seals its own discovery before taking this role):
 - Verification owner and execution permissions:
 - Bootstrap owner/head/result:
@@ -74,6 +76,8 @@ roster requires, plus any optional lane launched.
 |---|---|---|---|---|---|---|---|
 |  |  |  |  |  |  |  |  |
 
+- Model families that ran:
+- Single-family limitation or substitution and reason, if any:
 - Escalation reason/scope, if any:
 - Optional timeout and remaining obligations, if any:
 ```
@@ -246,7 +250,8 @@ Use `question (blocking):` for a genuine unresolved merge contract,
 - Third-party behavior claims checked in source or docs at the locked version:
 - Prose-only clarity pass done; fenced blocks byte-identical:
 - Frozen-set cross-model check: validator identity (differs from every drafting
-  model), session, head, findings:
+  model; at light or standard only, a fresh non-drafting context of a drafting
+  model with the limitation recorded), session, head, findings:
 - Delta round for comments added or reworded after the check:
 - Explicit publication approval received:
 - Submission event matches unresolved inline severity:
