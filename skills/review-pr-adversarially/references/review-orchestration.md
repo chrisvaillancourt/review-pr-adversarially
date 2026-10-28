@@ -33,46 +33,48 @@ than the caller set, use it unless the user explicitly overrides it, and record
 why. The tier sets the roster; the product stage sets the blocker bar. Never
 lower the tier to fit the lanes that happen to be available.
 
-| Tier | Typical change | Discovery roster, launched concurrently |
+Take the roster from the user's instructions when they define review lanes:
+the models, efforts, how to launch each from the current harness, the final-gate
+validator, and any fallback rule. Otherwise use these defaults:
+
+| Tier | Typical change | Default discovery lanes |
 |---|---|---|
 | Light | Docs, tests, internal tooling, small reversible changes | One fresh-context lane, any model |
-| Standard | Other behavior changes (the default) | Fresh-context Claude + GPT-6.1 Sol |
-| Deep | Auth or security boundaries, money, irreversible data, external contracts | GPT-6.1 Sol + Grok, optionally plus fresh-context Claude |
+| Standard | Other behavior changes (the default) | A fresh context of the orchestrator's model + one lane from another model family |
+| Deep | Auth or security boundaries, money, irreversible data, external contracts | The standard lanes + one lane from a third model |
 
-A tier's full roster, completed, is a completed pass at that tier. A pass at a
-lower tier than the recorded tier is incomplete for this review. An optional
-lane, once launched, is a requested lane. When the orchestrator cannot launch a
-Claude lane, a fresh-context lane from a model family other than Sol's may
-substitute, and a recorded substitute counts toward completion; record the
-substitution and its reason. The substitute is not Grok, which stays deep-only.
+A model family is a vendor's model line, such as Claude or GPT. Every lane runs
+in a fresh context that did not write the change and gets the complete packet.
+Lanes may run concurrently or one after another; either way, no lane sees
+another's work before sealing (section 2). A tier's full roster, completed, is a
+completed pass at that tier. A pass at a lower tier than the recorded tier is
+incomplete for this review. An optional lane, once launched, is a requested lane.
+Resolve the final-gate validator (the core skill's section 7) along with the
+lanes, before discovery starts, so an unavailable validator is found early.
 
-Cross-model roles:
+Resolve each lane to an actual available provider/model ID and effort setting
+before launch; record the requested and actual identities and the harness
+metadata that verifies them. A role label or reviewer nickname is not
+model-identity evidence. No particular harness tool name is required. Record the
+model families that actually ran.
 
-| Work | Model |
-|---|---|
-| Cross-model code lane | GPT-6.1 Sol |
-| Second code lane, deep tier only | Grok |
-| Data, fact, and deliverable checks (not an additional default code-discovery lane) | GPT-6 Astra |
+If a lane the tier requires is unavailable or its identity cannot be verified,
+apply the fallback rule from the user's instructions, recording the substitution
+and its reason. With no such rule, report the concrete blocker. Never substitute
+silently. Without user rules, one fallback applies: at the standard tier, when no
+model of a second family can be launched, a second fresh context of the
+orchestrator's model may stand in; record the pass as single-family, with the
+reason, and report it complete with that limitation. A deep pass never completes
+with only one family; an explicit user waiver makes it a recorded custom review,
+not a completed deep pass. Honor explicit user roster overrides and record their
+scope.
 
-Resolve these role names to actual available provider/model IDs and effort
-settings before launch; record the requested and actual identities and the
-harness metadata that verifies them. A role label or reviewer nickname is not
-model-identity evidence. Prefer a specialized Grok reviewer when available;
-otherwise explicitly select a Grok model in a general read-only reviewer. No
-particular harness tool name is required. If a lane the tier requires is
-unavailable or its identity cannot be verified, and no recorded substitution
-above applies, report the concrete blocker. Never substitute silently. Do not
-record a completed pass while a required lane remains unavailable or
-identity-unverified without a permitted, recorded substitution. Honor explicit
-user roster overrides and record their scope. Kimi is not a default lane,
-including for high-risk reviews.
-
-Designate one outcome owner and one verification owner early. A discovery lane,
-such as primary Sol, may own the outcome only after sealing its own discovery.
-Scheduling and outcome ownership do not add another full-code discovery pass. A
-separate clean Sol escalation is optional only for a high-risk or disputed causal
-chain or a coverage gap: record the specific reason and scope, then apply the
-same identity and seal rules. Do not escalate unconditionally.
+Designate one outcome owner and one verification owner early. A discovery lane
+may own the outcome only after sealing its own discovery. Scheduling and outcome
+ownership do not add another full-code discovery pass. A separate clean
+escalation lane is optional only for a high-risk or disputed causal chain or a
+coverage gap: record the specific reason and scope, then apply the same identity
+and seal rules. Do not escalate unconditionally.
 
 ## 2. Discover blind and seal privately
 

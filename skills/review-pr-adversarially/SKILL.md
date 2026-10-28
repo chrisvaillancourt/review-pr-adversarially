@@ -26,11 +26,11 @@ re-reviews**, read and follow
 [review-orchestration.md](references/review-orchestration.md) before discovery.
 The session that orchestrates the review launches the discovery lanes; this
 skill's text cannot start them. The roster follows the review tier (light,
-standard, or deep) in that reference, and a tier's full roster is a completed
-pass at that tier. Comparisons and pending edits stay scoped to the supplied
-feedback or edits unless changed behavior warrants a new full review. Explicit
-roster overrides remain explicit; Kimi is not a default or automatic high-risk
-lane.
+standard, or deep). It comes from the user's instructions when they define one,
+and otherwise from that reference's defaults. A tier's full roster is a
+completed pass at that tier. Comparisons and pending edits stay scoped to the
+supplied feedback or edits unless changed behavior warrants a new full review.
+Explicit roster overrides remain explicit.
 
 ## 1. Establish the review contract
 
@@ -370,12 +370,15 @@ validated text:
    block is byte-identical before and after the pass.
 2. **Cross-model check of the frozen set.** Freeze the bodies, anchors, and
    head. Send the frozen set and its evidence to one validator whose verified
-   model identity differs from every model that drafted the comments. Default
-   to the orchestration reference's data, fact, and deliverable checks role;
-   when that role resolves to a drafting model, choose another model and record
-   why. Ask for wrong or unsupported claims, overstatement, and anchors that do
-   not hold, and verify each finding before acting on it. Rerun the section 7
-   block checks on any fenced block that changes.
+   model identity differs from every model that drafted the comments. Use the
+   validator the user's instructions name; otherwise choose a model from
+   another family. When it resolves to a drafting model, choose another model
+   and record why. When no model other than the drafters' can be launched, a
+   fresh context that drafted nothing may validate at the light and standard
+   tiers; record that limitation. At the deep tier, report the blocker. Ask for
+   wrong or unsupported claims, overstatement, and anchors that do not hold, and
+   verify each finding before acting on it. Rerun the section 7 block checks on
+   any fenced block that changes.
 3. **Delta round for later changes.** Send any comment added or materially
    reworded after the check to the same validator as a delta round: resume its
    session when the harness supports that; otherwise give a new session the

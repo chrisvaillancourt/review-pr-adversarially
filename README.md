@@ -3,11 +3,14 @@
 An agent skill for evidence-backed adversarial PR reviews, risk calibration,
 review comparisons, and deliberate publication of approved feedback.
 
-The session that orchestrates a full review launches concurrent, clean-context
+The session that orchestrates a full review launches clean-context
 discovery lanes over the same complete, head-pinned diff and relevant callers.
-The roster follows the review tier: one fresh lane for light changes,
-**fresh-context Claude + GPT-6.1 Sol** for standard changes, and
-**GPT-6.1 Sol + Grok** for deep ones. Kimi is not a default lane. The outcome
+The roster follows the review tier and comes from your own agent instructions,
+so model choices change without a skill release. Without one, the defaults are
+one fresh lane for light changes, a fresh context of the orchestrator's model
+plus a lane from another model family for standard changes, and a third model
+added for deep ones. Single-family runs are recorded as such; deep reviews
+need two families. The outcome
 owner calibrates sealed findings after evidence verification; all requested lanes
 and required relevant gates must complete before final-complete publication. New
 heads that don't materially change behavior get a delta re-review. Comparisons
