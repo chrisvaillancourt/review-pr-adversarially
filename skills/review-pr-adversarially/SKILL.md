@@ -130,6 +130,15 @@ conflict handling. A tested application invariant may still reject valid
 upstream data. Do not infer that the highest version is authoritative without a
 source contract.
 
+Hunt a counterexample for every general or absence claim the change makes, in
+code, comments, docs, agent instructions, or the PR description: "every X",
+"X always" or "X never", "the only Y", "this can't be tested". List every
+instance in scope from the repository or the pinned dependency (each entry
+point, config file, construction site, or code path), not just the instance the
+author cited, and check each one. A claim verified on one instance is Assumed
+for the rest. A counterexample is a candidate; a claim that survives records the
+instances checked.
+
 Check for reimplementation: does the diff rebuild something the framework, a
 locked dependency, or the repository already provides? Check the version the
 lockfile pins, not the latest documentation. When a domain skill for the
