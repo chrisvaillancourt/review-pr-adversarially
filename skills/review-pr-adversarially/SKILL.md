@@ -373,8 +373,7 @@ requires an explicit user command.
 Run the gate on the comment set meant for publication, so the user approves the
 validated text:
 
-1. **Clarity pass on prose only.** Tighten the prose, for example with the
-   `unslop` and `writing-clearly-and-concisely` skills when installed. Leave
+1. **Clarity pass on prose only.** Use one editing pass by default. Leave
    fenced blocks, identifiers, and anchors alone, and check that every fenced
    block is byte-identical before and after the pass.
 2. **Cross-model check of the frozen set.** Freeze the bodies, anchors, and
