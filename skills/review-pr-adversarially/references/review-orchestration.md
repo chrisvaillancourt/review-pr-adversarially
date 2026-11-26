@@ -85,8 +85,9 @@ and seal rules. Do not escalate unconditionally.
 Each lane independently traces all changed behavior, relevant callers, and
 contract/standards obligations. A lane may confirm a candidate by running tests,
 reproductions, and mutations in its own scratch copy of the head: a detached
-worktree, a clone, a `git archive` export, or a scratch branch. The
-authoritative checkout, its refs, and the PR stay unchanged; the lane writes
+worktree, a `git archive` export, or a separate clone, where it may also
+branch (a branch made in a worktree of the original repository changes its
+refs). The authoritative checkout, its refs, and the PR stay unchanged; the lane writes
 nothing to external systems and makes no paid calls, and credentials and network
 access need section 3's scoped authorization. Return each run as a head-pinned
 command and its output. Keep initial candidate artifacts private until each
