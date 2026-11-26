@@ -13,7 +13,10 @@ relevant repository instructions and standards, and factual operating contract.
 List accepted debt as facts, not recommendations about finding dispositions.
 Give every discovery lane the same complete packet and access to relevant
 callers, tests, dependencies, and source contracts. File partitions or exclusive
-lenses cannot substitute for full behavioral coverage.
+lenses cannot substitute for full behavioral coverage. A user's roster may add a
+lane that deliberately gets a reduced packet, such as an open-prompt lane given
+only the target, the spec, and the stage. Record that lane as deliberately
+reduced, not as contaminated or unblinded; it adds to the complete-packet lanes.
 
 The session that orchestrates the review launches the discovery lanes before
 discovery starts; this skill's text cannot launch them. An agent assigned
@@ -35,7 +38,7 @@ lower the tier to fit the lanes that happen to be available.
 
 Take the roster from the user's instructions when they define review lanes:
 the models, efforts, how to launch each from the current harness, the final-gate
-validator, and any fallback rule. Otherwise use these defaults:
+validators, and any fallback rule. Otherwise use these defaults:
 
 | Tier | Typical change | Default discovery lanes |
 |---|---|---|
@@ -44,12 +47,13 @@ validator, and any fallback rule. Otherwise use these defaults:
 | Deep | Auth or security boundaries, money, irreversible data, external contracts | The standard lanes + one lane from a third model |
 
 A model family is a vendor's model line, such as Claude or GPT. Every lane runs
-in a fresh context that did not write the change and gets the complete packet.
+in a fresh context that did not write the change and, unless the roster
+deliberately reduces its packet, gets the complete packet.
 Lanes may run concurrently or one after another; either way, no lane sees
 another's work before sealing (section 2). A tier's full roster, completed, is a
 completed pass at that tier. A pass at a lower tier than the recorded tier is
 incomplete for this review. An optional lane, once launched, is a requested lane.
-Resolve the final-gate validator (the core skill's section 7) along with the
+Resolve the final-gate validators (the core skill's section 7) along with the
 lanes, before discovery starts, so an unavailable validator is found early.
 
 Resolve each lane to an actual available provider/model ID and effort setting
@@ -79,10 +83,16 @@ and seal rules. Do not escalate unconditionally.
 ## 2. Discover blind and seal privately
 
 Each lane independently traces all changed behavior, relevant callers, and
-contract/standards obligations. Discovery-only lanes skip tests, gates, and
-formatters. Keep their initial candidate artifacts private until each requested
-lane has sealed its initial findings and coverage gaps. Readiness notices contain
-only lane identity, pinned head, and ready/sealed status, never findings.
+contract/standards obligations. A lane may confirm a candidate by running tests,
+reproductions, and mutations in its own scratch copy of the head: a detached
+worktree, a clone, a `git archive` export, or a scratch branch. The
+authoritative checkout, its refs, and the PR stay unchanged; the lane writes
+nothing to external systems and makes no paid calls, and credentials and network
+access need section 3's scoped authorization. Return each run as a head-pinned
+command and its output. Keep initial candidate artifacts private until each
+requested lane has sealed its initial findings and coverage gaps. Readiness
+notices contain only lane identity, pinned head, and ready/sealed status, never
+findings.
 
 During discovery, lanes do not read peer history, artifacts, ledgers, results, or
 cross-PR broadcasts. Delay evaluative prior reviews and bot comments until seals
@@ -105,27 +115,32 @@ disconfirming evidence, not narrative rejection essays.
 
 Bootstrap the repository once per owned PR/head. The designated verification
 owner reads repository/runtime restrictions, discovers required relevant gates,
-and authors **and executes** the narrow offline smoke or reproduction needed for
-candidate claims. The calibrator may fill this role only when higher-level
-permissions allow execution. Discovery lanes remain read-only. Do not bypass
-execution restrictions: record blocked verification and the exact prerequisite.
-Credentials, network access, and paid operations need scoped authorization;
-offline verification does not imply authorization for those operations.
+and runs them once per unchanged head, early enough to inform the outcome. Share
+the head-pinned results rather than repeating bootstrap or gates per lane.
+Record command, owner, head, result, and evidence. Apply the publication
+conditions in section 4 to final-complete and incremental feedback.
 
-Run required relevant gates once per unchanged head, early enough to inform the
-outcome. Apply the publication conditions in section 4 to final-complete and
-incremental feedback. Share the head-pinned results rather than repeating
-bootstrap or gates per lane. Record command, owner, head, result, and evidence.
-A passing suite alone does not prove a causal claim; use the smallest relevant
-smoke/reproduction and qualify unexercised links.
+A lane's head-pinned command and output count as evidence. The verification
+owner reuses them and reruns, or authors a narrow offline smoke or reproduction,
+only for evidence that is disputed or insufficient for the candidate claim. A
+source citation can settle a contract mismatch without a run. One clean rerun
+does not dismiss an intermittent failure a lane witnessed. The calibrator may
+fill the verification role only when higher-level permissions allow execution.
+Do not bypass execution restrictions: record blocked verification and the exact
+prerequisite. Credentials, network access, and paid operations need scoped
+authorization; offline verification does not imply authorization for those
+operations. A passing suite alone does not prove a causal claim; use the
+smallest relevant smoke/reproduction and qualify unexercised links.
 
-The verification owner also runs the test audit's mutations. Apply each break to
-a scratch copy of the head (for example, a `git archive` export) rather than a
-worktree other lanes are reading, run it with the review's environment, and
-first confirm that imports resolve to the copy. Make exact-match edits only after
-checking that the anchor occurs once, so a mutation cannot also change an
-identical line elsewhere, such as inside a test's embedded script. Record each
-mutation, the tests run, and whether the break was caught or survived.
+A lane may run a test-audit mutation on its own scratch copy and record the
+result; the verification owner reruns disputed ones. Whoever runs a mutation
+applies the break to a scratch copy of the head (for example, a `git archive`
+export) rather than a worktree another lane is reading, runs it with the
+review's environment, and first confirms that imports resolve to the copy. Make
+exact-match edits only after checking that the anchor occurs once, so a mutation
+cannot also change an identical line elsewhere, such as inside a test's embedded
+script. Record each mutation, who ran it, the tests run, and whether the break
+was caught or survived.
 
 After sealing, the outcome owner receives raw candidates and evidence without
 supplied desired dispositions and applies the skill's risk-calibration reference.

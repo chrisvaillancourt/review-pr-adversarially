@@ -57,7 +57,8 @@ share.
 - Review tier and who set it (caller, user, or contract):
 - Roster for that tier and its source (user instructions, defaults, or explicit
   override and scope):
-- Final-gate validator, resolved before discovery:
+- Final-gate validators (each from a family other than the drafters'), source,
+  and fallback rule, resolved before discovery:
 - Outcome owner (a lane seals its own discovery before taking this role):
 - Verification owner and execution permissions:
 - Bootstrap owner/head/result:
@@ -72,7 +73,7 @@ coverage record rather than copying their prose. Add one row per lane the tier's
 roster requires, plus any optional lane launched.
 
 ```md
-| Lane | Requested provider/model/effort | Actual provider/model/effort; identity evidence | Head/packet | Seal time/artifact | Blind / Unblinded / Contaminated; source/time | Completed / Incomplete / Blocked | Coverage/gaps |
+| Lane | Requested provider/model/effort | Actual provider/model/effort; identity evidence | Head/packet (complete or deliberately reduced) | Seal time/artifact | Blind / Unblinded / Contaminated; source/time | Completed / Incomplete / Blocked | Coverage/gaps |
 |---|---|---|---|---|---|---|---|
 |  |  |  |  |  |  |  |  |
 
@@ -99,9 +100,11 @@ roster requires, plus any optional lane launched.
 
 ## Verification evidence
 
-One owner authors and executes permitted offline smoke/reproductions and required
-relevant gates. Discovery-only lanes skip execution. Record shared results once
-per unchanged head; distinguish a passing gate from proof of a candidate.
+Lanes may run tests, reproductions, and mutations in their own scratch copies;
+record each head-pinned command and output here with the lane as owner. The
+verification owner runs required relevant gates once per unchanged head and
+reruns only disputed or insufficient evidence. Record shared results once per
+unchanged head; distinguish a passing gate from proof of a candidate.
 
 ```md
 | Evidence ID | Gate / smoke / reproduction | Owner | Head | Command and prerequisites | Result / artifact | Candidate links | Required before publication? |
@@ -117,12 +120,13 @@ per unchanged head; distinguish a passing gate from proof of a candidate.
 
 One row per new or changed test claim. A claim about what a test does or cannot
 do stays Assumed until its mutation has run. Record the mutation as the exact
-edit, its anchor count, and the scratch copy it ran in.
+edit, its anchor count, the scratch copy it ran in, and who ran it (a lane, or
+the verification owner for a disputed one).
 
 ```md
-| Test | Behavior | Mutation | Tests run | Caught/Survives/Unrun | Candidate |
-|---|---|---|---|---|---|
-|  |  |  |  |  |  |
+| Test | Behavior | Mutation | Run by | Tests run | Caught/Survives/Unrun | Candidate |
+|---|---|---|---|---|---|---|
+|  |  |  |  |  |  |  |
 
 - Duplicate or change-detector tests, with the test each duplicates:
 - Contract defaults no test pins:
@@ -249,10 +253,12 @@ Use `question (blocking):` for a genuine unresolved merge contract,
   and type checker results:
 - Third-party behavior claims checked in source or docs at the locked version:
 - Prose-only clarity pass done; fenced blocks byte-identical:
-- Frozen-set cross-model check: validator identity (differs from every drafting
-  model; at light or standard only, a fresh non-drafting context of a drafting
-  model with the limitation recorded), session, head, findings:
-- Delta round for comments added or reworded after the check:
+- Frozen-set cross-model check, per validator: identity (family differs from
+  the drafters'), session, head, findings, open objections:
+- Validator fallback applied (the user's rule; otherwise, at light or standard
+  only, a fresh non-drafting context of a drafting model) and limitation:
+- Delta round sent to each validator for comments added or reworded after the
+  check:
 - Explicit publication approval received:
 - Submission event matches unresolved inline severity:
 - Own-PR request-changes limitation and COMMENT/blocking-label handling:

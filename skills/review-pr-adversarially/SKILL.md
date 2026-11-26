@@ -81,8 +81,10 @@ Use the contract template in
   deployment, permissions, and schema boundaries.
 - Check authoritative contracts rather than relying on names or plausible API
   shapes.
-- Assign head-pinned execution to the designated verification owner, within
-  repository/runtime permissions, when a claim depends on a real integration.
+- Pin every run to the head. Discovery lanes may run tests, reproductions, and
+  mutations in their own scratch copies; the designated verification owner runs
+  the required shared gates and reruns only disputed or insufficient evidence,
+  within repository/runtime permissions (see the orchestration reference).
 - In blind discovery, defer evaluative prior feedback until sealing; follow the
   orchestration reference for necessary early intent context and unblinded lanes.
 
@@ -152,8 +154,9 @@ and contract defaults that no test pins. Every claim about what a test does or
 cannot do needs a mutation result: the named break applied to a scratch copy of
 the head, the tests run, and the result (caught or survives) recorded. Reasoning
 from framework semantics is not enough; until a mutation runs, the claim is
-Assumed. Discovery lanes propose the mutation; the verification owner runs it
-(see the orchestration reference).
+Assumed. A lane may run its own mutation on a scratch copy and record the
+result; the verification owner reruns disputed ones (see the orchestration
+reference).
 
 Add candidates to the ledger before drafting comments. A possible code path is a
 hypothesis, not yet a blocker. Do not discard a real concern merely because it is
@@ -377,23 +380,25 @@ validated text:
    fenced blocks, identifiers, and anchors alone, and check that every fenced
    block is byte-identical before and after the pass.
 2. **Cross-model check of the frozen set.** Freeze the bodies, anchors, and
-   head. Send the frozen set and its evidence to one validator whose verified
-   model identity differs from every model that drafted the comments. Use the
-   validator the user's instructions name; otherwise choose a model from
-   another family. When it resolves to a drafting model, choose another model
-   and record why. When no model other than the drafters' can be launched, a
-   fresh context that drafted nothing may validate at the light and standard
-   tiers; record that limitation. At the deep tier, report the blocker. Ask for
-   wrong or unsupported claims, overstatement, and anchors that do not hold, and
-   verify each finding before acting on it. Rerun the section 7 block checks on
-   any fenced block that changes.
+   head. Use the validators the user's instructions name; otherwise use one
+   validator. Each validator's verified model is from a family other than the
+   drafters'. When a validator resolves to a drafting model,
+   choose another model and record why. Send the frozen set and its evidence
+   to each validator. Ask for wrong or unsupported claims, overstatement, and
+   anchors that do not hold, and verify each finding before acting on it. A
+   comment publishes only when no validator holds an open objection. Rerun the
+   section 7 block checks on any fenced block that changes.
 3. **Delta round for later changes.** Send any comment added or materially
-   reworded after the check to the same validator as a delta round: resume its
+   reworded after the check to each validator as a delta round: resume its
    session when the harness supports that; otherwise give a new session the
-   frozen set and the earlier findings. Do not publish text the validator has
-   not seen. When the validator is
-   unavailable, report the blocker as for an unavailable lane; do not
-   substitute silently.
+   frozen set and that validator's earlier findings. Publish only text every
+   validator has seen.
+4. **Fallback for an unavailable validator.** When the user's instructions give
+   a validator fallback rule, apply it and record the result. Without one: when
+   no model outside the drafters' family can be launched, a fresh context that
+   drafted nothing may validate at the light and standard tiers; record that
+   limitation. At the deep tier, or when no validator can run, report the
+   blocker as for an unavailable lane. Never substitute silently.
 
 ## 8. Publish and read back only when authorized
 
